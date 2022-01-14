@@ -4,7 +4,7 @@ const API_URL = "http://hivelvet.test/";
 
 class AuthService {
   login(email: string, password: string) {
-    console.log("login service ",email,password)
+     
     return axios
       .post(API_URL + "login", {
        email,
@@ -26,7 +26,7 @@ class AuthService {
 
   register(username: string, email: string, password: string) {
      
-      console.log("users info in register"+username,email,password);
+      
     return axios.post(API_URL +'register' , {
       username,
       email,

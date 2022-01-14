@@ -20,7 +20,6 @@
 import './App.css';
 import AppHeader from "./components/AppHeader";
 import AppSocket from "./components/AppSocket";
-import { MyForm } from './components/MyForm';
 import "bootstrap/dist/css/bootstrap.min.css";
 import Register from './components/Register';
 import {    BrowserRouter,Route,Routes } from 'react-router-dom';

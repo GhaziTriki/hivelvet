@@ -42,7 +42,7 @@ export default class Login extends  Component < Props, State> {
 
   handleLogin(formValue: { email: string; password: string }) {
     const { email, password } = formValue;
-      console.log(email,password);
+    
     this.setState({
       message: "",
       loading: true
@@ -51,12 +51,11 @@ export default class Login extends  Component < Props, State> {
 
      AuthService.login(email, password).then(
       (response) => {
-        console.log("success login");
-        this.setState({
+         this.setState({
           message: "success login",
           loading: true
         }); 
-       console.log(response.data);
+     
       },
       error => {
        

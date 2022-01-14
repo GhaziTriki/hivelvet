@@ -73,7 +73,7 @@ export default class Register extends Component<Props, State> {
   handleRegister(formValue: {  email: string; username: string ;  password: string ; password2: string }) {
     const { email,username,  password,password2 } = formValue;
      
-console.log( email,username, password,password2);
+ 
 
     AuthService.register(
       username,
@@ -81,7 +81,7 @@ console.log( email,username, password,password2);
       password
     ).then(
       response => {
-        console.log(response.data);
+      
       
        this.setState({
            message: "User Registred with success",
@@ -92,17 +92,15 @@ console.log( email,username, password,password2);
       },
       error => {
         const resMessage="";
-        console.log(error.response.data );
-        console.log(error.response.data.includes("email"));
-        console.log(error.response.data.includes("username"));
-        if(error.response.data.includes("email")){
+    
+        if(error.response.data.errors.includes("email")){
            this.setState({
  
            successful: false,
            message: "A user with this email already exists",
          }); 
         }
-        if(error.response.data.includes("username")){
+        if(error.response.data.errors.includes("username")){
           this.setState({
           
            successful: false,
