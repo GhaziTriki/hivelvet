@@ -16,18 +16,32 @@
  * with Hivelvet; if not, see <http://www.gnu.org/licenses/>.
  */
 
-import React from 'react';
+ import React from 'react';
 import './App.css';
 import AppHeader from "./components/AppHeader";
 import AppSocket from "./components/AppSocket";
-
-function App() {
+import { MyForm } from './components/MyForm';
+import "bootstrap/dist/css/bootstrap.min.css";
+import Register from './components/Register';
+import {    BrowserRouter,Route,Routes } from 'react-router-dom';
+import Login from './components/Login';
+ function App() {
     return (
-        <div className="App">
-            <AppSocket/>
-            <AppHeader/>
+        <div>
+             
+            <main>
+                <Routes>
+                    <Route path="/register" element={<Register/>}/>
+                    <Route path="/login" element={<Login/>}/>
+                         
+                    
+
+                </Routes>
+            </main>
         </div>
     );
 }
 
-export default App;
+export default App; 
+
+ 

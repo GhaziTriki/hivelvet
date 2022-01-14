@@ -25,7 +25,7 @@ const AppHeader = () => {
 
     return (
         <Header>
-            <Button type="ghost">Button</Button>
+             
         </Header>
     )
 }
