@@ -16,20 +16,24 @@
  * with Hivelvet; if not, see <http://www.gnu.org/licenses/>.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import AuthService from "../services/auth.service";
 
-import {Steps, Button, Row, Col, Form, Input, Typography, Upload, Card, Avatar, Modal, message} from 'antd';
+import {Steps, Button, Row, Col, Form, Input, Typography, Upload, Card, Avatar, Modal, message, Spin} from 'antd';
 import { EyeInvisibleOutlined, EyeTwoTone, InboxOutlined } from '@ant-design/icons';
 import ColorPicker from "rc-color-picker/lib/ColorPicker";
 import "rc-color-picker/assets/index.css";
 import { T } from '@transifex/react';
+import { RcFile } from 'antd/lib/upload';
 
 const { Title, Text, Paragraph } = Typography;
 const { Step } = Steps;
 const { Meta } = Card;
 
 const Install = () => {
+    const [fileList , setFileList] = React.useState ( );
+    const [file , setFile] = React.useState ( );
+
     const [stepForm] = Form.useForm();
     const defaultColor = '#fbbc0b';
     const [activeStep, setActiveStep] = React.useState(0);
@@ -67,12 +71,12 @@ const Install = () => {
                     label={<T _str="Username" />}
                     name="username"
                     hasFeedback
-                    rules={[
+                  /*  rules={[
                         {
                             required: true,
                             message: 'Username is required',
                         },
-                    ]}
+                    ]}*/
                 >
                     <Input placeholder="Username" />
                 </Form.Item>
@@ -89,7 +93,7 @@ const Install = () => {
                             required: true,
                             message: 'Email is required',
                         },
-                    ]}
+                    ]} 
                 >
                     <Input placeholder="Email" />
                 </Form.Item>
@@ -97,7 +101,7 @@ const Install = () => {
                     label={<T _str="Password" />}
                     name="password"
                     hasFeedback
-                    rules={[
+                   rules={[
                         {
                             min: 4,
                             message: 'Password must be at least 4 characters',
@@ -106,7 +110,7 @@ const Install = () => {
                             required: true,
                             message: 'Password is required',
                         },
-                    ]}
+                    ]} 
                 >
                     <Input.Password
                         placeholder="Password"
@@ -126,6 +130,12 @@ const Install = () => {
             }
             return e && e.fileList;
         };
+        
+        const dummyRequest = ({ file  , onSuccess  }) => {
+            setTimeout(() => {
+              onSuccess("ok");
+            }, 0);
+          };
         return (
             <div className="company-container">
                 <div className="box">
@@ -139,12 +149,12 @@ const Install = () => {
                         label={<T _str="Company name" />}
                         name="company_name"
                         hasFeedback
-                        rules={[
+                         rules={[
                             {
                                 required: true,
                                 message: 'Company name is required',
                             },
-                        ]}
+                        ]} 
                     >
                         <Input placeholder="Company name" />
                     </Form.Item>
@@ -153,7 +163,7 @@ const Install = () => {
                         label={<T _str="Company website" />}
                         name="company_url"
                         hasFeedback
-                        rules={[
+                      /*  rules={[
                             {
                                 required: true,
                                 message: 'Company website is required',
@@ -163,7 +173,7 @@ const Install = () => {
                                 //warningOnly: true
                                 message: 'Company website is not a valid url'
                             }
-                        ]}
+                        ]} */
                     >
                         <Input placeholder="Company website" />
                     </Form.Item>
@@ -177,7 +187,7 @@ const Install = () => {
                                 required: true,
                                 message: 'Platform name is required',
                             },
-                        ]}
+                        ]} 
                     >
                         <Input placeholder="Platform name" />
                     </Form.Item>
@@ -186,7 +196,7 @@ const Install = () => {
                         label={<T _str="Terms of use URL" />}
                         name="term_url"
                         hasFeedback
-                        rules={[
+                      /* rules={[
                             {
                                 required: true,
                                 message: 'Term of use URL is required',
@@ -195,7 +205,7 @@ const Install = () => {
                                 type: 'url',
                                 message: 'Term of use url is not a valid url'
                             }
-                        ]}
+                        ]} */
                     >
                         <Input placeholder="Term of use URL" />
                     </Form.Item>
@@ -204,7 +214,7 @@ const Install = () => {
                         label={<T _str="Privacy Policy URL" />}
                         name="policy_url"
                         hasFeedback
-                        rules={[
+                       /*rules={[
                             {
                                 required: true,
                                 message: 'Privacy Policy is required',
@@ -213,7 +223,7 @@ const Install = () => {
                                 type: 'url',
                                 message: 'Privacy Policy url is not a valid url'
                             }
-                        ]}
+                        ]} */
                     >
                         <Input placeholder="Privacy Policy URL" />
                     </Form.Item>
@@ -226,13 +236,47 @@ const Install = () => {
                         </Title>
                     </Paragraph>
                     <Form.Item>
-                        <Form.Item valuePropName="fileList" getValueFromEvent={normFile} noStyle>
-                            <Upload.Dragger name="files" action="/upload.do">
+                    <Form.Item valuePropName="fileList" getValueFromEvent={normFile} noStyle  >
+                            <Upload.Dragger name="logo"    showUploadList={{showRemoveIcon:false}} fileList={fileList}    accept= ".png,.jpg,.jpeg" onChange={(info) =>{ 
+     
+           
+       let fileList:any  = [...info.fileList];
+        console.log(fileList);
+        fileList = fileList.slice(-1);
+        console.log(fileList[0].type);
+         const img=fileList[0].type === "image/jpg"  ||  fileList[0].type === "image/jpeg"  ||  fileList[0].type === "image/png" ;
+       if( img ){
+                    
+            console.log(fileList);
+
+          setFileList(fileList);
+          setFile(fileList[0]);
+          console.log(File);
+          console.log(fileList);
+       // message.success(`file uploaded successfully`);
+
+        } 
+     }}
+     
+     beforeUpload={(file)=>{
+      console.log(fileList);
+
+          if(file.type  === "image/jpg" || file.type ==="image/png" || file.type ==="image/jpeg" ){
+             message.success("file uploaded successfully");
+             return false;
+         }
+         message.error("wrong file");
+       return null
+       
+    }}
+      
+ >
                                 <p className="ant-upload-drag-icon"><InboxOutlined /></p>
                                 <Text strong className="ant-upload-text">Drop your logo here</Text>
-                                <p className="ant-upload-hint">.rar .zip .doc .docx .pdf .jpg ...</p>
+                                <p className="ant-upload-hint">.jpg .png .jpeg...</p>
                             </Upload.Dragger>
                         </Form.Item>
+                   
                     </Form.Item>
                     <div className="colors-container">
                         <Form.Item
@@ -458,6 +502,8 @@ const Install = () => {
             formData.secondary_color = secondaryColor;
             formData.accent_color = accentColor;
             formData.add_color = addColor;
+              formData.logo =fileList ;
+           
             console.log(formData);
 
             AuthService.install(formData)
@@ -466,7 +512,7 @@ const Install = () => {
                     //console.log(response.data.message);
                 })
                 .catch((error) => {
-                    console.log(error);
+                    console.log(error.response);
                     //const responseMessage = error.response.data.message;
                 });
         }

@@ -21,6 +21,7 @@ namespace Actions\Core;
 
 use Actions\Base as BaseAction;
 use Base;
+use Enum\ResponseCode;
 use Enum\UserRole;
 use Enum\UserStatus;
 use Models\Setting;
@@ -39,58 +40,85 @@ class Install extends BaseAction
      */
     public function execute($f3, $params): void
     {
+        /*$files = \Web::instance()->receive(function($file ){
+            $this->logger->info('App configuration', ["file"=>$file]);
+
+            echo "file =".$file;
+        });**/
+
+
         // test with the same env var in frontend
         //if ($f3->get('system.installed') === false) {
-            $body   = $this->getDecodedBody();
-            $form   = $body['data'];
+       $body = $this->getDecodedBody();
+      // var_dump($body);
 
-            $this->logger->info('App configuration', ['form' => $form]);
+      $form  = $body['data'];
 
-            $user   = new User();
-            $user->email        = $form['email'];
-            $user->username     = $form['username'];
-            $user->password     = $form['password'];
-            $user->role         = UserRole::ADMIN;
-            $user->status       = UserStatus::ACTIVE;
-            $user->created_on   = date('Y-m-d H:i:s');
+        $this->logger->info('App configuration', ['form' => $form, "logo"=>$form["logo"] ]);
+       /* $files = \Web::instance()->receive(function($file ,$formFieldName){
+            // ...
+        },true,function($fileBaseName, $formFieldName){
+            // build new file name from base name or input field name
+            $this->logger->info('App configuration', ["file"=>$fileBaseName]);
+            return "image.png";
+        }
+        );*/
+
+        $user = new User();
+
+         
+        $user->email = $form["email"];
+        $user->username = $form['username'];
+        $user->password = $form['password'];
+        $user->role = UserRole::ADMIN;
+        $user->status = UserStatus::ACTIVE;
+        $user->created_on = date('Y-m-d H:i:s');
+
+        try {
+
+          //  $this->logger->info('App configuration', ['user' => $user->toArray()]);
+            $files = \Web::instance()->receive(function($file ){
+                $this->logger->info('App configuration', ["file"=>$file]);
+
+                echo $file;
+            });
+
+                $setting = new Setting();
+            $setting->company_name = $form['company_name'];
+            $setting->company_website = $form['company_url'];
+            $setting->platform_name = $form['platform_name'];
+            $setting->terms_use = $form['term_url'];
+            $setting->privacy_policy = $form['policy_url'];
+             $setting->primary_color = $form['primary_color'];
+            $setting->secondary_color = $form['secondary_color'];
+            $setting->accent_color = $form['accent_color'];
+            $setting->additional_color = $form['add_color'];
+            $setting->created_on = date('Y-m-d H:i:s');
+          $setting->logo=$form["logo"][0]["name"] ;
+            echo $_POST["logo"][0];
+
+
+
 
             try {
-                $this->logger->info('App configuration', ['user' => $user->toArray()]);
-                $setting   = new Setting();
-                $setting->company_name = $form['company_name'];
-                $setting->company_website = $form['company_url'];
-                $setting->platform_name = $form['platform_name'];
-                $setting->terms_use = $form['term_url'];
-                $setting->privacy_policy = $form['policy_url'];
-                //$setting->logo = $form['logo'];
-                $setting->primary_color = $form['primary_color'];
-                $setting->secondary_color = $form['secondary_color'];
-                $setting->accent_color = $form['accent_color'];
-                $setting->additional_color = $form['add_color'];
-                $setting->created_on = date('Y-m-d H:i:s');
+             //   $this->logger->info('App configuration', ['setting' => $setting->toArray()]);
 
-                try {
-                    $this->logger->info('App configuration', ['setting' => $setting->toArray()]);
-                    /*
-                    $user->save();
-                    $setting->save();
-                    $this->logger->info('administrator and settings successfully added', ['user' => $user->toArray()]);
-                    $this->renderJson(['message' => 'Application is ready now !']);
-                    */
-                }
-                catch (\Exception $e) {
-                    $message = $e->getMessage();
-                    $this->logger->error('settings could not be added', ['error' => $message]);
-                    $this->renderJson(['errorStep2' => $message], ResponseCode::HTTP_INTERNAL_SERVER_ERROR);
-                    return;
-                }
-            }
-            catch (\Exception $e) {
+             //   $user->save();
+                $setting->save();
+           //     $this->logger->info('administrator and settings successfully added', ['user' => $user->toArray()]);
+                $this->renderJson(['message' => 'Application is ready now !']);
+
+            } catch (\Exception $e) {
                 $message = $e->getMessage();
-                $this->logger->error('administrator could not be added', ['error' => $message]);
-                $this->renderJson(['errorStep1' => $message], ResponseCode::HTTP_INTERNAL_SERVER_ERROR);
+                $this->logger->error('settings could not be added', ['error' => $message]);
+         $this->renderJson(['errorStep2' => $message], ResponseCode::HTTP_INTERNAL_SERVER_ERROR);
                 return;
             }
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+            $this->logger->error('administrator could not be added', ['error' => $message]);
+          $this->renderJson(['errorStep1' => $message], ResponseCode::HTTP_INTERNAL_SERVER_ERROR);
+            return;
+        }
         //}
-    }
-}
+    }}

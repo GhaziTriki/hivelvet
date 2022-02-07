@@ -4,8 +4,16 @@ const API_URL = 'http://api.hivelvet.test';
 
 class AuthService {
     install(data: object) {
+      //  console.log(data);
+      const config ={
+         headers: {
+            "Content-Type": "multipart/form-data",
+            "Accept": "application/json",
+            "type": "formData"
+         }
+      }
         return axios.post(API_URL + '/install', {
-            data
+            data,config
         });
     }
 
